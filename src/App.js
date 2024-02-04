@@ -1,10 +1,14 @@
+import { useSelector } from 'react-redux';
 import './App.css';
-import AuthForm from './Components/AuthForm';
+import AuthPage from './Components/Pages/AuthPage';
+import Mainpage from './Components/Pages/Mainpage';
 
 function App() {
+  const isAuth = useSelector((state) => state.auth.isAuthenticated);
   return (
-    <div className="App">
-      <AuthForm/>
+    <div >
+      {!isAuth && <AuthPage/>}
+      {isAuth && <Mainpage />}
     </div>
   );
 }

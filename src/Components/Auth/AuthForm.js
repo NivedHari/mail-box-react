@@ -1,10 +1,17 @@
 import React from "react";
-import { useRef } from "react";
-
+import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../store/auth-slice";
 const AuthForm = () => {
+  const dispatch = useDispatch();
+  const [isLogin, setIsLogin] = useState(false);
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const confirmPasswordInputRef = useRef();
+
+  const switchAuthModeHandler = () => {
+    setIsLogin((prevState) => !prevState);
+  };
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -14,9 +21,9 @@ const AuthForm = () => {
     const confirmPassword = confirmPasswordInputRef?.current?.value || "";
 
     if (enteredPassword !== confirmPassword) {
-        alert("Passwords do not match");
-        return;
-      }
+      alert("Passwords do not match");
+      return;
+    }
 
     const user = {
       email: enteredEmail,
@@ -25,32 +32,60 @@ const AuthForm = () => {
     };
     console.log(user);
 
-    try {
-      const response = await fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBVIPWCXjtwe-bVGWsTdJ8kxBLenB7FD6k",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: enteredEmail,
-            password: enteredPassword,
-            returnSecureToken: true,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
+    if (isLogin) {
+      try {
+        const response = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBVIPWCXjtwe-bVGWsTdJ8kxBLenB7FD6k",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email:enteredEmail,
+              password:enteredPassword,
+              returnSecureToken: true,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("login Failed");
         }
-      );
+        const data = await response.json();
+        dispatch(authActions.login());
 
-      if (!response.ok) {
-        throw new Error("Sign Up Failed");
+        return data;
+        
+      } catch (error) {
+        alert(error.message);
       }
+    } else {
+      try {
+        const response = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBVIPWCXjtwe-bVGWsTdJ8kxBLenB7FD6k",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: enteredEmail,
+              password: enteredPassword,
+              returnSecureToken: true,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      const data = await response.json();
-      console.log("Signup successful:", data);
+        if (!response.ok) {
+          throw new Error("Sign Up Failed");
+        }
 
-    } catch (error) {
-      console.error("Signup error:", error);
-      alert(error.message);
+        const data = await response.json();
+        console.log("Signup successful:", data);
+      } catch (error) {
+        console.error("Signup error:", error);
+        alert(error.message);
+      }
     }
   };
 
@@ -63,7 +98,7 @@ const AuthForm = () => {
               <div className="card" style={{ borderRadius: "15px" }}>
                 <div className="card-body p-5">
                   <h2 className="text-uppercase text-center mb-5">
-                    Create an account
+                    {isLogin ? "Login" : "Sign Up"}
                   </h2>
 
                   <form onSubmit={submitHandler}>
@@ -72,9 +107,9 @@ const AuthForm = () => {
                         type="email"
                         id="email"
                         ref={emailInputRef}
+                        placeholder="Email"
                         className="form-control form-control-lg"
                       />
-                      <label className="form-label">Your Email</label>
                     </div>
 
                     <div className="form-outline mb-4">
@@ -82,9 +117,9 @@ const AuthForm = () => {
                         type="password"
                         id="password"
                         ref={passwordInputRef}
+                        placeholder="Password"
                         className="form-control form-control-lg"
                       />
-                      <label className="form-label">Password</label>
                     </div>
 
                     <div className="form-outline mb-4">
@@ -92,21 +127,27 @@ const AuthForm = () => {
                         type="password"
                         id="confirmpassword"
                         ref={confirmPasswordInputRef}
+                        placeholder="Confirm Password"
                         className="form-control form-control-lg"
                       />
-                      <label className="form-label">Repeat your password</label>
                     </div>
 
                     <div className="d-flex justify-content-center">
-                      <button className="btn btn-primary btn-block btn-lg gradient-custom-4 text-body">
-                        Sign up
+                      <button className="btn btn-primary btn-block btn-lg  ">
+                        {isLogin ? "Login" : "Create Account"}
                       </button>
                     </div>
 
                     <p className="text-center text-muted mt-5 mb-0">
-                      Have already an account?{" "}
-                      <a href="#!" className="fw-bold text-body">
-                        <u>Login here</u>
+                      {isLogin
+                        ? "Don't have an account?"
+                        : "already have an account?"}{" "}
+                      <a
+                        href="#!"
+                        className="fw-bold text-body"
+                        onClick={switchAuthModeHandler}
+                      >
+                        <u>{isLogin ? "Sign up" : "Login"}</u>
                       </a>
                     </p>
                   </form>
