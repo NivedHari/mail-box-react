@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { uiActions } from "../../store/ui-slice";
 import { Modal, Button, Form } from "react-bootstrap";
-import { EditorState, convertToRaw } from "draft-js";
+import { EditorState} from "draft-js";
 import { useRef, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -63,6 +63,7 @@ const ComposeMail = () => {
       .getPlainText("\u0001");
 
     const emailData = {
+      id: Math.random().toString(),
       sender: senderEmail,
       receiver: enteredAddress,
       subject: enteredSubject,

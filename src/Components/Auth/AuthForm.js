@@ -2,8 +2,10 @@ import React from "react";
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/auth-slice";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const AuthForm = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [isLogin, setIsLogin] = useState(false);
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
@@ -20,7 +22,7 @@ const AuthForm = () => {
     const enteredPassword = passwordInputRef.current.value;
     const confirmPassword = confirmPasswordInputRef?.current?.value || "";
 
-    if (enteredPassword !== confirmPassword) {
+    if (!isLogin && (enteredPassword !== confirmPassword)) {
       alert("Passwords do not match");
       return;
     }
@@ -54,6 +56,7 @@ const AuthForm = () => {
         const data = await response.json();
         // const cleanedMail = `${data.email.replace(/\.|@/g, "")}`;
         dispatch(authActions.login({ token: data.idToken, email: data.email}));
+        history.replace('/inbox');
 
         return data;
         
@@ -91,7 +94,7 @@ const AuthForm = () => {
   };
 
   return (
-    <section className="vh-100 ">
+    <section className="mt-5 ">
       <div className="mask d-flex align-items-center h-100 ">
         <div className="container h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
@@ -123,7 +126,7 @@ const AuthForm = () => {
                       />
                     </div>
 
-                    <div className="form-outline mb-4">
+                    {!isLogin && (<div className="form-outline mb-4">
                       <input
                         type="password"
                         id="confirmpassword"
@@ -131,7 +134,7 @@ const AuthForm = () => {
                         placeholder="Confirm Password"
                         className="form-control form-control-lg"
                       />
-                    </div>
+                    </div>)}
 
                     <div className="d-flex justify-content-center">
                       <button className="btn btn-primary btn-block btn-lg  ">
