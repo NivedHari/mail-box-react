@@ -52,7 +52,8 @@ const AuthForm = () => {
           throw new Error("login Failed");
         }
         const data = await response.json();
-        dispatch(authActions.login());
+        // const cleanedMail = `${data.email.replace(/\.|@/g, "")}`;
+        dispatch(authActions.login({ token: data.idToken, email: data.email}));
 
         return data;
         
