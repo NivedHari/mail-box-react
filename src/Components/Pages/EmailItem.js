@@ -1,14 +1,6 @@
 import React from "react";
 import { Card } from "react-bootstrap";
 
-const unreadDotStyle = {
-  width: "15px",
-  height: "15px",
-  backgroundColor: "blue",
-  borderRadius: "50%",
-  display: "inline-block",
-  marginLeft: "5px", // Adjust as needed
-};
 
 const ellipsisStyle = {
   overflow: "hidden",
@@ -21,7 +13,6 @@ function EmailItem({ from, to, subject, time, snippet }) {
   return (
     <Card className="email-item">
       <Card.Body>
-        <span style={unreadDotStyle}></span>
         <div className="d-flex justify-content-between align-items-center">
           <Card.Title className="mb-0">
             <span className="text-muted">From : </span>
