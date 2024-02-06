@@ -1,22 +1,50 @@
 .sidebar{
-  background-color: rgba(var(--bs-dark-rgb));
+  /* background-color: rgba(var(--bs-dark-rgb)); */
+  /* background-color: whitesmoke; */
   width: 250px;
   height: calc(100vh - 72px) ;
-  text-align: center;
+  /* text-align: center; */
 }
 
-.sidebar a {
-  color: white;
+.sidebar button{
   font-size: 1.2rem;
 }
 
+.sidebar a {
+  color: black;
+  font-size: 1.4rem;
+  background-color: rgb(240, 222, 222);
+  margin-bottom: 1rem;
+  margin-left: 0;
+  border-radius: 0 12px 12px 0 ;
+  padding: 0 1rem;
+}
 
-/* .sidebar a.active {
-  text-decoration: underline;
-} */
+.sidebar a:hover {
+  color: black;
+  background-color: rgb(239, 203, 203);
+  
+}
 
+
+.blue-dot{
+  background-color: blue;
+  width: 20px;
+  height: 20px;
+  border-radius: 50px;
+  position: absolute;
+}
 
 .page {
   display: grid;
-  grid-template-columns: 260px auto;
+  grid-template-columns: 250px auto;
+}
+
+.pointer-card:hover {
+  background-color: whitesmoke;
+}
+
+.link-no-style {
+  text-decoration: none; 
+  color: inherit; 
 }

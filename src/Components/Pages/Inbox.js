@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect} from "react";
+import { useSelector,useDispatch } from "react-redux";
 import EmailItem from "./EmailItem";
+import { Card } from "react-bootstrap";
+import { emailActions } from "../../store/email-slice";
 
 export const Inbox = () => {
+  const dispatch = useDispatch();
   const emailId = useSelector((state) => state.auth.email);
   const cleanedMail = `${emailId.replace(/\.|@/g, "")}`;
-  const [emails, setEmails] = useState([]);
+  const emails = useSelector((state) => state.email.inbox);
   useEffect(() => {
     const fetchMails = async () => {
       try {
@@ -20,8 +23,12 @@ export const Inbox = () => {
         }
 
         const data = await response.json();
-        const emailsArray = data ? Object.values(data) : [];
-        setEmails(emailsArray);
+        const emailsArray = Object.entries(data).map(([key, email]) => ({
+          key, 
+          ...email,
+        }));
+        dispatch(emailActions.setInbox({items:emailsArray}));
+
         console.log("Fetched emails:", data);
       } catch (error) {
         console.log(error);
@@ -30,19 +37,29 @@ export const Inbox = () => {
     fetchMails();
   }, []);
   return (
-    <div>
-      <h1>INBOX</h1>
-      {emails.map((email) => (
-        <EmailItem
-          key={email.id}
-          id={email.id} 
-          from={email.sender}
-          to={email.receiver}
-          subject={email.subject}
-          time={email.timestamp}
-          snippet={email.message}
-        />
-      ))}
-    </div>
+    <Card className="m-4 p-3">
+      <div style={{backgroundColor:"whitesmoke"}}>
+        <h1
+          className="font-weight-bold "
+          style={{ fontSize: "40px", fontWeight: "bold", color: "black" }}
+        >
+          INBOX
+        </h1>
+      </div>
+
+      <div className="mt-4">
+        {emails.map((email) => (
+          <EmailItem
+            key={email.id}
+            id={email.id}
+            from={email.sender}
+            to={email.receiver}
+            subject={email.subject}
+            time={email.timestamp}
+            snippet={email.message}
+          />
+        ))}
+      </div>
+    </Card>
   );
 };

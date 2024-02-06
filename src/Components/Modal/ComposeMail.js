@@ -69,6 +69,7 @@ const ComposeMail = () => {
       subject: enteredSubject,
       message: plainTextMessage,
       timestamp: new Date().toLocaleString(),
+      isRead: false,
     };
 
     console.log(emailData);

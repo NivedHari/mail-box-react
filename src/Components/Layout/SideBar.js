@@ -1,7 +1,8 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { uiActions } from "../../store/ui-slice";
-import { Nav } from "react-bootstrap";
+import { Nav, Card } from "react-bootstrap";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const SideBar = () => {
   const dispatch = useDispatch();
@@ -13,11 +14,11 @@ const SideBar = () => {
   return (
     <div className="sidebar">
       <Nav className="flex-column ">
-        <button className="btn btn-primary m-4" onClick={toggleHandler}>
+        <button className="btn btn-danger m-4" onClick={toggleHandler}>
           Compose
         </button>
-        <Nav.Link href="/Inbox">Inbox</Nav.Link>
-        <Nav.Link href="/sentMail">Sent Mail</Nav.Link>
+        <Link className="link-no-style" to={"/Inbox"}>Inbox</Link>
+        <Link className="link-no-style" to={"/sentMail"}>Sent Mail</Link>
       </Nav>
     </div>
   );

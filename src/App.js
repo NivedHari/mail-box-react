@@ -7,6 +7,7 @@ import ComposeMail from "./Components/Modal/ComposeMail";
 import SideBar from "./Components/Layout/SideBar";
 import { Inbox } from "./Components/Pages/Inbox";
 import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
+import EmailBody from "./Components/Pages/EmailBody";
 
 function App() {
   const isAuth = useSelector((state) => state.auth.isAuthenticated);
@@ -16,13 +17,11 @@ function App() {
       <div>
         <Navbar />
         <Switch>
-          <Route path="/" exact>
-            {isAuth ? <Inbox /> : <Redirect to="/auth" />}
-          </Route>
+          
           <div className={isAuth ? "page" : ""}>
             {isAuth && <SideBar />}
             {ModalOpen && <ComposeMail />}
-            <Route path="/inbox">
+            <Route path="/inbox" exact>
               {isAuth ? <Inbox /> : <Redirect to="/auth" />}
             </Route>
             {!isAuth && (
@@ -30,6 +29,12 @@ function App() {
                 <AuthPage />
               </Route>
             )}
+            <Route path="/" exact>
+            {isAuth ? <Inbox /> : <Redirect to="/auth" />}
+          </Route>
+            <Route path="/inbox/:mailId">
+                <EmailBody/>
+              </Route>
           </div>
         </Switch>
       </div>
