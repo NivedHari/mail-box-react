@@ -1,97 +1,14 @@
 import React from "react";
-import { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { authActions } from "../../store/auth-slice";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import useAuthForm from "../Hooks/useAuthForm";
 const AuthForm = () => {
-  const dispatch = useDispatch();
-  const history = useHistory();
-  const [isLogin, setIsLogin] = useState(true);
-  const emailInputRef = useRef();
-  const passwordInputRef = useRef();
-  const confirmPasswordInputRef = useRef();
-
-  const switchAuthModeHandler = () => {
-    setIsLogin((prevState) => !prevState);
-  };
-
-  const submitHandler = async (event) => {
-    event.preventDefault();
-
-    const enteredEmail = emailInputRef.current.value;
-    const enteredPassword = passwordInputRef.current.value;
-    const confirmPassword = confirmPasswordInputRef?.current?.value || "";
-
-    if (!isLogin && (enteredPassword !== confirmPassword)) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    const user = {
-      email: enteredEmail,
-      password: enteredPassword,
-      confirmPassword: confirmPassword,
-    };
-    console.log(user);
-
-    if (isLogin) {
-      try {
-        const response = await fetch(
-          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBVIPWCXjtwe-bVGWsTdJ8kxBLenB7FD6k",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              email:enteredEmail,
-              password:enteredPassword,
-              returnSecureToken: true,
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("login Failed");
-        }
-        const data = await response.json();
-        // const cleanedMail = `${data.email.replace(/\.|@/g, "")}`;
-        dispatch(authActions.login({ token: data.idToken, email: data.email}));
-        history.replace('/inbox');
-
-        return data;
-        
-      } catch (error) {
-        alert(error.message);
-      }
-    } else {
-      try {
-        const response = await fetch(
-          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBVIPWCXjtwe-bVGWsTdJ8kxBLenB7FD6k",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              email: enteredEmail,
-              password: enteredPassword,
-              returnSecureToken: true,
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Sign Up Failed");
-        }
-
-        const data = await response.json();
-        console.log("Signup successful:", data);
-      } catch (error) {
-        console.error("Signup error:", error);
-        alert(error.message);
-      }
-    }
-  };
+  const {
+    isLogin,
+    emailInputRef,
+    passwordInputRef,
+    confirmPasswordInputRef,
+    switchAuthModeHandler,
+    submitHandler,
+  } = useAuthForm();
 
   return (
     <section className="mt-5 ">
@@ -126,15 +43,17 @@ const AuthForm = () => {
                       />
                     </div>
 
-                    {!isLogin && (<div className="form-outline mb-4">
-                      <input
-                        type="password"
-                        id="confirmpassword"
-                        ref={confirmPasswordInputRef}
-                        placeholder="Confirm Password"
-                        className="form-control form-control-lg"
-                      />
-                    </div>)}
+                    {!isLogin && (
+                      <div className="form-outline mb-4">
+                        <input
+                          type="password"
+                          id="confirmpassword"
+                          ref={confirmPasswordInputRef}
+                          placeholder="Confirm Password"
+                          className="form-control form-control-lg"
+                        />
+                      </div>
+                    )}
 
                     <div className="d-flex justify-content-center">
                       <button className="btn btn-primary btn-block btn-lg  ">
