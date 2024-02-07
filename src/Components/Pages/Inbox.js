@@ -1,26 +1,13 @@
-import React, { useEffect} from "react";
-import { useSelector,useDispatch } from "react-redux";
+import React from "react";
 import InboxItem from "./InboxItem";
 import { Card } from "react-bootstrap";
-import { fetchMails } from "../../store/email-actions";
-
+import useEmail from "../Hooks/useEmail";
 export const Inbox = () => {
-  const dispatch = useDispatch();
-  const emailId = useSelector((state) => state.auth.email);
-  const emails = useSelector((state) => state.email.inbox);
+  const { emails } = useEmail();
 
-  useEffect(() => {
-    dispatch(fetchMails(emailId));
-
-    const intervalId = setInterval(() => {
-      dispatch(fetchMails(emailId));
-    }, 2000);
-
-    return () => clearInterval(intervalId);
-  }, [emailId]);
   return (
     <Card className="m-4 p-3 ">
-      <div style={{backgroundColor:"whitesmoke"}}>
+      <div style={{ backgroundColor: "whitesmoke" }}>
         <h1
           className="font-weight-bold "
           style={{ fontSize: "40px", fontWeight: "bold", color: "black" }}

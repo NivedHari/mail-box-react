@@ -3,8 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Card, Row, Col, Container } from "react-bootstrap";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { markEmailAsRead } from "../../store/email-actions";
-import { deleteEmail } from "../../store/email-actions";
+import useEmail from "../Hooks/useEmail";
 
 const ellipsisStyle = {
   marginRight: "0",
@@ -14,22 +13,21 @@ const ellipsisStyle = {
 };
 
 function InboxItem({ from, subject, time, snippet, id }) {
-  const dispatch = useDispatch();
   const inbox = useSelector((state) => state.email.inbox);
   const mail = inbox.find((mail) => mail.id === id);
   const emailId = useSelector((state) => state.auth.email);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const isRead = mail.isRead;
+  const { markEmailAsRead, deleteEmail } = useEmail();
   const readHandler = () => {
     if (isRead === false) {
-      dispatch(markEmailAsRead(id, mail, emailId,"received"));
+      markEmailAsRead(id, mail, emailId,"received");
     }
   };
-
   const deleteHandler = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    dispatch(deleteEmail(mail, emailId));
+    deleteEmail(mail, emailId);
   };
   return (
     <Link

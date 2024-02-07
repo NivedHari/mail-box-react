@@ -10,9 +10,6 @@ function SentBody() {
   const history = useHistory();
   const sent = useSelector((state) => state.email.sentMails);
   const mail = sent.find((mail) => mail.id === params.mailId);
-  console.log(mail);
-
-
   return (
     <Card className="m-4 p-3">
       <div>

@@ -1,23 +1,11 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
 import { Card } from "react-bootstrap";
 import SentItem from "./SentItem";
-import { fetchMails } from "../../store/email-actions";
+import useEmail from "../Hooks/useEmail";
+
 
 function SentMails() {
-  const dispatch = useDispatch();
-  const emailId = useSelector((state) => state.auth.email);
-  const sentMails = useSelector((state) => state.email.sentMails);
-
-  useEffect(() => {
-    dispatch(fetchMails(emailId));
-
-    const intervalId = setInterval(() => {
-      dispatch(fetchMails(emailId));
-    }, 2000);
-
-    return () => clearInterval(intervalId);
-  }, [emailId]);
+  const {sentMails} = useEmail();
   return (
     <Card className="m-4 p-3 ">
       <div style={{ backgroundColor: "whitesmoke" }}>

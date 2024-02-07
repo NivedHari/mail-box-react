@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+import { useSelector} from "react-redux";
 import { Card, Row, Col, Container } from "react-bootstrap";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { markEmailAsRead } from "../../store/email-actions";
-import { deleteEmail } from "../../store/email-actions";
+import useEmail from "../Hooks/useEmail";
 
 const ellipsisStyle = {
   overflow: "hidden",
@@ -14,23 +13,23 @@ const ellipsisStyle = {
 };
 
 function SentItem({ to, subject, time, snippet, id }) {
-  const dispatch = useDispatch();
   const sent = useSelector((state) => state.email.sentMails);
   const mail = sent.find((mail) => mail.id === id);
   const emailId = useSelector((state) => state.auth.email);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const isRead = mail.isRead;
+  const { markEmailAsRead, deleteEmail } = useEmail();
 
   const readHandler = () => {
     if (isRead === false) {
-      dispatch(markEmailAsRead(id, mail, emailId, "sent"));
+      markEmailAsRead(id, mail, emailId, "sent");
     }
   };
 
   const deleteHandler = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    dispatch(deleteEmail(mail, emailId));
+    deleteEmail(mail, emailId);
   };
   return (
     <Link
