@@ -10,7 +10,7 @@ function SentMails() {
   const sentMails = useSelector((state) => state.email.sentMails);
 
   useEffect(() => {
-    dispatch(fetchMails(emailId, "sent"));
+    dispatch(fetchMails(emailId));
   }, [dispatch]);
   return (
     <Card className="m-4 p-3 ">

@@ -10,7 +10,7 @@ export const Inbox = () => {
   const emails = useSelector((state) => state.email.inbox);
 
   useEffect(() => {
-    dispatch(fetchMails(emailId,"received"));
+    dispatch(fetchMails(emailId));
   }, [dispatch]);
   return (
     <Card className="m-4 p-3 ">

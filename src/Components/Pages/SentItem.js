@@ -30,7 +30,7 @@ function SentItem({ to, subject, time, snippet, id }) {
   const deleteHandler = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    dispatch(deleteEmail(mail.key, emailId, "sent"));
+    dispatch(deleteEmail(mail, emailId));
   };
   return (
     <Link

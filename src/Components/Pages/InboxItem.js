@@ -29,7 +29,7 @@ function InboxItem({ from, subject, time, snippet, id }) {
   const deleteHandler = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    dispatch(deleteEmail(mail.key, emailId,"received"));
+    dispatch(deleteEmail(mail, emailId));
   };
   return (
     <Link
