@@ -37,7 +37,7 @@ export const Inbox = () => {
     fetchMails();
   }, []);
   return (
-    <Card className="m-4 p-3">
+    <Card className="m-4 p-3 ">
       <div style={{backgroundColor:"whitesmoke"}}>
         <h1
           className="font-weight-bold "
@@ -47,10 +47,10 @@ export const Inbox = () => {
         </h1>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4" onClick={console.log("clicked")}>
         {emails.map((email) => (
           <EmailItem
-            key={email.id}
+            key={email.key}
             id={email.id}
             from={email.sender}
             to={email.receiver}

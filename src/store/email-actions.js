@@ -4,7 +4,6 @@ export const markEmailAsRead = (id, mail, emailId) => {
   const cleanedMail = `${emailId.replace(/\.|@/g, "")}`;
   return async (dispatch) => {
     try {
-      // Dispatch the action to mark the email as read in the Redux store
       dispatch(emailActions.markRead(emailId));
 
       const emailData = {
@@ -17,7 +16,6 @@ export const markEmailAsRead = (id, mail, emailId) => {
         isRead: true,
       };
 
-      // Make a PUT request to update the email's isRead property in Firebase
       const response = await fetch(
         `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/received/${cleanedMail}/${mail.key}.json`,
         {
@@ -28,9 +26,10 @@ export const markEmailAsRead = (id, mail, emailId) => {
           body: JSON.stringify(emailData),
         }
       );
-      console.log(`https://mail-box-dd769-default-rtdb.firebaseio.com/emails/received/${cleanedMail}/${mail.key}.json`)
+      console.log(
+        `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/received/${cleanedMail}/${mail.key}.json`
+      );
 
-      // Check if the request was successful
       if (!response.ok) {
         console.error("Error marking email as read:", response.statusText);
         return;
@@ -39,6 +38,23 @@ export const markEmailAsRead = (id, mail, emailId) => {
       console.log("Email marked as read successfully:", emailId);
     } catch (error) {
       console.error("Error marking email as read:", error);
+    }
+  };
+};
+
+export const deleteEmail = (key, emailId) => {
+  const cleanedMail = `${emailId.replace(/\.|@/g, "")}`;
+  return async (dispatch) => {
+    try {
+      await fetch(
+        `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/received/${cleanedMail}/${key}.json`,
+        {
+          method: "DELETE",
+        }
+      );
+      dispatch(deleteMail(key));
+    } catch (error) {
+      console.error("Error deleting email:", error);
     }
   };
 };

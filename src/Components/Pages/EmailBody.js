@@ -12,6 +12,7 @@ function EmailBody() {
   const mail = inbox.find((mail) => mail.id === params.mailId);
   console.log(mail);
 
+
   return (
     <Card className="m-4 p-3">
       <div>

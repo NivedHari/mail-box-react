@@ -1,9 +1,10 @@
-import React from "react";
+import React,{useState} from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Card } from "react-bootstrap";
+import { Card, Row, Col, Container } from "react-bootstrap";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
-import { emailActions } from "../../store/email-slice";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { markEmailAsRead } from "../../store/email-actions";
+import { deleteEmail } from "../../store/email-actions";
 
 const ellipsisStyle = {
   overflow: "hidden",
@@ -12,17 +13,24 @@ const ellipsisStyle = {
   maxWidth: "450px",
 };
 
-function EmailItem({ from, to, subject, time, snippet, id }) {
+function EmailItem({ from, to, subject, time, snippet, id,key }) {
   const dispatch = useDispatch();
   const inbox = useSelector((state) => state.email.inbox);
   const mail = inbox.find((mail) => mail.id === id);
   const emailId = useSelector((state) => state.auth.email);
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
   const isRead = mail.isRead;
   const readHandler = () => {
     if (isRead === false) {
       dispatch(markEmailAsRead(id, mail, emailId));
     }
-  };
+  }
+
+  const deleteHandler = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dispatch(deleteEmail(mail.key,emailId));
+  }
   return (
     <Link
       to={`/inbox/${id}`}
@@ -30,24 +38,34 @@ function EmailItem({ from, to, subject, time, snippet, id }) {
       onClick={() => readHandler()}
     >
       <Card
-        className="email-item  p-2 pointer-card"
+        className="email-item my-1 pointer-card"
         style={{ cursor: "pointer" }}
+        onMouseEnter={() => setShowDeleteButton(true)}
+        onMouseLeave={() => setShowDeleteButton(false)}
       >
         <div>{!isRead && <div className="blue-dot"></div>}</div>
         <Card.Body className="hover-effect">
-          <div className="d-flex justify-content-between align-items-center">
-            <Card.Title className="m-2">
-              <span className="text-muted">From : </span>
-              {from}
-            </Card.Title>
-            {/* <Card.Title className="mb-0">{to}</Card.Title> */}
-
-            <Card.Title className="m-2">{subject}</Card.Title>
-            <Card.Text className="m-2" style={ellipsisStyle}>
-              {snippet}
-            </Card.Text>
-            <small className="text-muted  m-2">{time}</small>
-          </div>
+          <Container>
+            <Row className="align-items-center">
+              <Col xs={12} sm={6} md={4} lg={3}>
+                <Card.Title className="m-2 p-0" style={{marginRight:'0'}}>
+                  {from}
+                </Card.Title>
+              </Col>
+              <Col xs={12} sm={6} md={4} lg={3}>
+                <Card.Text className="m-2 p-0 h5" style={ellipsisStyle}>{subject}</Card.Text>
+              </Col>
+              <Col xs={12} sm={12} md={4} lg={4}>
+                <Card.Text className="m-2" style={ellipsisStyle}>
+                  {snippet}
+                </Card.Text>
+              </Col>
+              <Col xs={12} sm={6} md={4} lg={2} className="text-end">
+                <small className={`text-muted m-2  ${showDeleteButton ? 'd-none' : ''}`}>{time}</small>
+                <button className={`btn btn-danger p-1 ${showDeleteButton ? '' : 'd-none'}`} onClick={deleteHandler}><DeleteIcon/></button>
+              </Col>
+            </Row>
+          </Container>
         </Card.Body>
       </Card>
     </Link>
@@ -55,3 +73,5 @@ function EmailItem({ from, to, subject, time, snippet, id }) {
 }
 
 export default EmailItem;
+
+

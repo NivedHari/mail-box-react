@@ -13,6 +13,10 @@ const emailSlice = createSlice({
         if (emailIndex !== -1) {
             state.inbox[emailIndex].isRead = true; 
         }
+    },
+    deleteMail(state,action){
+        const key = action.payload.key;
+        state.inbox = state.inbox.filter(mail => mail.key !== key);
     }
   },
 });
