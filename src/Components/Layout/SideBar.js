@@ -27,7 +27,7 @@ const SideBar = () => {
     <div className="sidebar">
       <Nav className="flex-column ">
         <button className="btn btn-danger m-4" onClick={toggleHandler}>
-          <CreateIcon /> Compose
+          <CreateIcon /> <span>Compose</span>
         </button>
 
         <Link className="link-no-style " to={"/Inbox"}>

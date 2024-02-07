@@ -94,4 +94,32 @@ export const fetchMails = (emailId) => {
       console.log(error);
     }
   };
+}
+
+export const sendEmail = (emailId, emailData) => {
+  const cleanedMail = `${emailId.replace(/\.|@/g, "")}`;
+  return async (dispatch) => {
+    const apiUrl = `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/${encodeURIComponent(
+      cleanedMail
+    )}.json`;
+    console.log(apiUrl);
+
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(emailData),
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log(`email stored successfully:`, responseData.name);
+      await dispatch(fetchMails(emailId));
+    } else {
+      console.error(`email failed to store:`, response.statusText);
+      throw new Error("Failed to store email");
+    }
+  };
 };
+

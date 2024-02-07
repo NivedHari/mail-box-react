@@ -7,10 +7,10 @@ import { markEmailAsRead } from "../../store/email-actions";
 import { deleteEmail } from "../../store/email-actions";
 
 const ellipsisStyle = {
+  marginRight: "0",
   overflow: "hidden",
   whiteSpace: "nowrap",
   textOverflow: "ellipsis",
-  maxWidth: "450px",
 };
 
 function InboxItem({ from, subject, time, snippet, id }) {
@@ -46,11 +46,11 @@ function InboxItem({ from, subject, time, snippet, id }) {
           <Container>
             <Row className="align-items-center">
               <Col xs={12} sm={6} md={4} lg={3}>
-                <Card.Title className="m-2 p-0" style={{ marginRight: "0" }}>
+              <Card.Title className="m-2 p-0" style={ellipsisStyle}>
                   {from}
                 </Card.Title>
               </Col>
-              <Col xs={12} sm={6} md={4} lg={3}>
+              <Col xs={12} sm={6} md={4} lg={3} >
                 <Card.Text className="m-2 p-0 h5" style={ellipsisStyle}>
                   {subject}
                 </Card.Text>
@@ -68,6 +68,7 @@ function InboxItem({ from, subject, time, snippet, id }) {
                 className="text-end"
                 onMouseEnter={() => setShowDeleteButton(true)}
                 onMouseLeave={() => setShowDeleteButton(false)}
+                style={ellipsisStyle}
               >
                 <small
                   className={`text-muted m-2  ${

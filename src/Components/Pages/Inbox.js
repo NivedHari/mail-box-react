@@ -11,7 +11,13 @@ export const Inbox = () => {
 
   useEffect(() => {
     dispatch(fetchMails(emailId));
-  }, [dispatch]);
+
+    const intervalId = setInterval(() => {
+      dispatch(fetchMails(emailId));
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [emailId]);
   return (
     <Card className="m-4 p-3 ">
       <div style={{backgroundColor:"whitesmoke"}}>
@@ -23,7 +29,7 @@ export const Inbox = () => {
         </h1>
       </div>
 
-      <div className="mt-4" onClick={console.log("clicked")}>
+      <div className="mt-4">
         {emails.map((email) => (
           <InboxItem
             key={email.key}

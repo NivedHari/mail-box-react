@@ -11,7 +11,13 @@ function SentMails() {
 
   useEffect(() => {
     dispatch(fetchMails(emailId));
-  }, [dispatch]);
+
+    const intervalId = setInterval(() => {
+      dispatch(fetchMails(emailId));
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [emailId]);
   return (
     <Card className="m-4 p-3 ">
       <div style={{ backgroundColor: "whitesmoke" }}>

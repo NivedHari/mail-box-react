@@ -1,9 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
 import { uiActions } from "../../store/ui-slice";
 import { Modal, Button, Form } from "react-bootstrap";
-import { EditorState} from "draft-js";
+import { EditorState } from "draft-js";
 import { useRef, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
+import { sendEmail } from "../../store/email-actions";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const ComposeMail = () => {
@@ -17,36 +18,6 @@ const ComposeMail = () => {
 
   const closeComposeModal = () => {
     dispatch(uiActions.toggleModal());
-  };
-
-  const saveEmail = async (emailId, emailData) => {
-    const apiUrl = `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/${encodeURIComponent(
-      emailId
-    )}.json`;
-    console.log(apiUrl);
-
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(emailData),
-    });
-
-    if (response.ok) {
-      const responseData = await response.json();
-      console.log(
-        `email stored successfully:`,
-        responseData.name
-      );
-      return responseData.name;
-    } else {
-      console.error(
-        `email failed to store:`,
-        response.statusText
-      );
-      throw new Error("Failed to store email");
-    }
   };
 
   const sendHandler = async (e) => {
@@ -66,7 +37,7 @@ const ComposeMail = () => {
       message: plainTextMessage,
       timestamp: new Date().toLocaleString(),
       isRead: false,
-      sent:false,
+      sent: false,
     };
     const sentData = {
       id: Math.random().toString(),
@@ -76,21 +47,13 @@ const ComposeMail = () => {
       message: plainTextMessage,
       timestamp: new Date().toLocaleString(),
       isRead: false,
-      sent:true,
+      sent: true,
     };
 
-    // console.log(emailData);
-
-    try {
-      const cleanedSender = `${senderEmail.replace(/\.|@/g, "")}`;
-      const sentEmailId = await saveEmail(cleanedSender, sentData);
-      const cleanedReceiver = `${enteredAddress.replace(/\.|@/g, "")}`;
-      const receivedEmailId = await saveEmail(cleanedReceiver,receivedData);
-
-        console.log("Email sent successfully.", "Sent Email ID:", sentEmailId, "Received Email ID:", receivedEmailId);
-    } catch (error) {
-      console.error("Error sending email:", error.message);
-    }
+    const cleanedSender = `${senderEmail.replace(/\.|@/g, "")}`;
+    dispatch(sendEmail(cleanedSender, sentData));
+    const cleanedReceiver = `${enteredAddress.replace(/\.|@/g, "")}`;
+    dispatch(sendEmail(cleanedReceiver, receivedData));
 
     closeComposeModal();
   };
