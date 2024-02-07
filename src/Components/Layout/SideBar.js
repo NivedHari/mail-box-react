@@ -39,7 +39,7 @@ const SideBar = () => {
             <span className="number">{unreadMessages}</span> unread
           </span>
         </Link>
-        <Link className="link-no-style" to={"/sentMail"}>
+        <Link className="link-no-style" to={"/sent"}>
           <div className="item">
             <SendIcon />
             <span>Sent Mail</span>

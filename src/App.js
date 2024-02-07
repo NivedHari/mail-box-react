@@ -8,6 +8,8 @@ import SideBar from "./Components/Layout/SideBar";
 import { Inbox } from "./Components/Pages/Inbox";
 import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 import EmailBody from "./Components/Pages/EmailBody";
+import SentMails from "./Components/Pages/SentMails";
+import SentBody from "./Components/Pages/SentBody";
 
 function App() {
   const isAuth = useSelector((state) => state.auth.isAuthenticated);
@@ -24,6 +26,9 @@ function App() {
             <Route path="/inbox" exact>
               {isAuth ? <Inbox /> : <Redirect to="/auth" />}
             </Route>
+            <Route path="/sent" exact>
+              {isAuth ? <SentMails/> : <Redirect to="/auth" />}
+            </Route>
             {!isAuth && (
               <Route path="/auth">
                 <AuthPage />
@@ -35,6 +40,9 @@ function App() {
             <Route path="/inbox/:mailId">
                 <EmailBody/>
               </Route>
+            <Route path="/sent/:mailId">
+                <SentBody/>
+              </Route>
           </div>
         </Switch>
       </div>
@@ -44,5 +52,3 @@ function App() {
 
 export default App;
 
-// {!isAuth && <AuthPage />}
-// {isAuth && <Mainpage />}

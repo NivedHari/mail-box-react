@@ -1,6 +1,6 @@
 import { emailActions } from "./email-slice";
 
-export const markEmailAsRead = (id, mail, emailId) => {
+export const markEmailAsRead = (id, mail, emailId, folder) => {
   const cleanedMail = `${emailId.replace(/\.|@/g, "")}`;
   return async (dispatch) => {
     try {
@@ -17,7 +17,7 @@ export const markEmailAsRead = (id, mail, emailId) => {
       };
 
       const response = await fetch(
-        `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/received/${cleanedMail}/${mail.key}.json`,
+        `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/${folder}/${cleanedMail}/${mail.key}.json`,
         {
           method: "PATCH",
           headers: {
@@ -26,10 +26,6 @@ export const markEmailAsRead = (id, mail, emailId) => {
           body: JSON.stringify(emailData),
         }
       );
-      console.log(
-        `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/received/${cleanedMail}/${mail.key}.json`
-      );
-
       if (!response.ok) {
         console.error("Error marking email as read:", response.statusText);
         return;
@@ -42,19 +38,70 @@ export const markEmailAsRead = (id, mail, emailId) => {
   };
 };
 
-export const deleteEmail = (key, emailId) => {
+export const deleteEmail = (key, emailId, folder) => {
   const cleanedMail = `${emailId.replace(/\.|@/g, "")}`;
   return async (dispatch) => {
     try {
       await fetch(
-        `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/received/${cleanedMail}/${key}.json`,
+        `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/${folder}/${cleanedMail}/${key}.json`,
         {
           method: "DELETE",
         }
       );
-      dispatch(deleteMail(key));
+      if (folder === "received") {
+        await dispatch(emailActions.deleteInboxMail(key));
+        await dispatch(fetchMails(emailId, "received"));
+      }
+      if (folder === "sent") {
+        await dispatch(emailActions.deleteSentMail(key));
+        await dispatch(fetchMails(emailId, "sent")); 
+      }
     } catch (error) {
       console.error("Error deleting email:", error);
+    }
+  };
+};
+
+
+export const fetchMails = (emailId, folder) => {
+  const cleanedMail = `${emailId.replace(/\.|@/g, "")}`;
+  return async (dispatch) => {
+    try {
+      const apiUrl = `https://mail-box-dd769-default-rtdb.firebaseio.com/emails/${folder}/${cleanedMail}.json`;
+      const response = await fetch(apiUrl, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch emails");
+      }
+
+      const data = await response.json();
+      if (!data) {
+        if (folder === "received") {
+          dispatch(emailActions.setInbox({ items: [] }));
+        }
+        if (folder === "sent") {
+          dispatch(emailActions.setSentMails({ items: [] }));
+        }
+
+        return;
+      }
+      const emailsArray = Object.entries(data).map(([key, email]) => ({
+        key,
+        ...email,
+      }));
+      if (folder === "received") {
+        dispatch(emailActions.setInbox({ items: emailsArray }));
+      }
+      if (folder === "sent") {
+        dispatch(emailActions.setSentMails({ items: emailsArray }));
+      }
+
+      console.log("Fetched emails:", data);
+    } catch (error) {
+      console.log(error);
     }
   };
 };
